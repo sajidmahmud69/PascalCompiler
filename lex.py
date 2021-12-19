@@ -57,7 +57,11 @@ OPERATOR_DICT = {
     # Boolean Operator
     'and': 'TK_AND',
     'or': 'TK_OR',
-    'not': 'TK_NOT'
+    'not': 'TK_NOT',
+
+    # Miscellaniious
+    '(': 'TK_LEFT_PAREN',
+    ')': 'TK_RIGHT_PAREN',
 }
 
 # TokenType = Enum ('TokenType', [
