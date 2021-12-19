@@ -148,6 +148,12 @@ class Lexer:
         elif self.curChar == ')':
             token = Token (self.curChar, OPERATOR_DICT [')'])
 
+        elif self.curChar == ';':
+            token = Token (self.curChar, OPERATOR_DICT[';'])
+        
+        elif self.curChar == '.':
+            token = Token (self.curChar, OPERATOR_DICT['.'])
+
         elif self.curChar == '\n':
             token = Token (self.curChar, 'TK_NEWLINE')
             

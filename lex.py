@@ -62,6 +62,8 @@ OPERATOR_DICT = {
     # Miscellaniious
     '(': 'TK_LEFT_PAREN',
     ')': 'TK_RIGHT_PAREN',
+    ';': 'TK_SEMICOLON',
+    '.': 'TK_PERIOD'
 }
 
 # TokenType = Enum ('TokenType', [

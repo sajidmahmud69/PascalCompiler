@@ -48,8 +48,20 @@ class Parser:
     def statement (self):
         # Check the first token to see what kind of token it is
 
+        # Check if program keyword is here
+        if self.checkToken ('TK_PROGRAM'):
+            print ('STATEMENT-PROGRAM')
+            self.nextToken ()
+            self.match ('TK_IDENTIFIER')
+            self.match ('TK_SEMICOLON')
+            self.match ('TK_NEWLINE')
+            self.match ('TK_BEGIN')
+            # self.match ('TK_NEWLINE')
+            
+        
+
         # writeln (expression | string)
-        if self.checkToken ('TK_WRITELN'):
+        elif self.checkToken ('TK_WRITELN'):
             print ('STATEMENT-WRITELN')
             self.nextToken ()
 
@@ -60,11 +72,17 @@ class Parser:
                 # Expect an expression
                 self.expression ()
 
+        # last token must be TK_END followed by TK_PERIOD
+        else:
+            print ('STATEMENT-END')
+            self.match ('TK_END')
+            self.match ('TK_PERIOD')
+        
         # newline
         self.newline ()
 
     def newline (self):
-        print ("NEWLINE")
+        # print ("NEWLINE")
 
         # Require at least one newline.
         self.match('TK_NEWLINE')
