@@ -104,6 +104,46 @@ class Lexer:
             tokText = self.source[startPos : self.curPos] # Get the substring.
             token = Token(tokText, 'TK_STRING')
 
+
+        # handle numbers
+        elif self.curChar.isdigit ():
+            # Leading character is a digit, so this must be a number.
+            # Get all consecutive digits and decimal if there is one.
+            startPos = self.curPos
+            while self.peek ().isdigit ():
+                self.nextChar ()
+
+            if self.peek () == '.':         # decimal
+                self.nextChar ()
+
+                # Must have at least one digit after decimal.
+                if not self.peek().isdigit(): 
+                    # Error!
+                    self.abort("Illegal character in number.")
+                while self.peek ().isdigit ():
+                    self.nextChar ()
+
+            tokText = self.source [startPos: self.curPos + 1]   # get the substring aka number
+            token = Token (tokText, 'TK_NUMBER')
+
+        # handle identifiers such as variables
+        elif self.curChar.isalpha ():
+            # Leading character is a letter so this could be either an identifier or keyword
+            # Get the rest of the alpha numeric characters
+            startPos = self.curPos
+            while self.peek ().isalnum():
+                self.nextChar ()
+
+            # Check to see if the token is in the list of keywords
+            tokText = self.source[startPos : self.curPos + 1]       # get the substring
+            keyword = Token.check_if_keyword (tokText)
+            if keyword is None:     # Identifier/Variable
+                token = Token (tokText, 'TK_IDENTIFIER')
+            else:
+                token = Token (tokText, keyword)
+
+
+
         elif self.curChar == '\n':
             token = Token (self.curChar, 'TK_NEWLINE')
             
