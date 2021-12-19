@@ -23,8 +23,8 @@ RESERVED_KEYWORD_DICT = {
     'else': 'TK_ELSE',
     'while': 'TK_WHILE',
     'writeln': 'TK_WRITELN',
-    # '\\n': 'TK_NEWLINE',
-    # '\\0': 'TK_EOF'
+    'TK_NEWLINE': 'TK_NEWLINE',
+    'TK_EOF': 'TK_EOF'
 }
 
 DATA_TYPE_DICT = {
@@ -37,6 +37,7 @@ DATA_TYPE_DICT = {
 OPERATOR_DICT = {
     # Assignment operator
     ':=' : 'TK_ASSIGNMENT',
+    
     # Arithmetic operators
     '+': 'TK_ADDITION',
     '-': 'TK_SUBTRACTION',
