@@ -1,3 +1,4 @@
+# This file will keep track of generated C code and outputs it
 class Emitter:
     def __init__(self, path):
         self.path = path

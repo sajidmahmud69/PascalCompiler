@@ -1,6 +1,7 @@
 program hello;
 begin
-    var a := 50
-    writeln (a)
+    writeln ("hello");
+    var a := 50 + 100
+    writeln (a);
 
 end.

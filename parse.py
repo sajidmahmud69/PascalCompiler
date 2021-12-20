@@ -4,8 +4,9 @@ from lexer import Lexer
 # Parser object keeps track of current token and checks if the code matches the program grammar
 
 class Parser:
-    def __init__(self, lexer):
+    def __init__(self, lexer, emitter):
         self.lexer = lexer
+        self.emitter = emitter
 
         self.symbols = set ()           # variables declared so far
         self.curToken = None
@@ -51,7 +52,8 @@ class Parser:
 
 
     def program (self):
-        print ('PROGRAM')
+        self.emitter.headerLine ('#include <stdio.h>')
+        self.emitter.headerLine ('int main (void){')
 
         # We need to ignore some newlines as they maybe newlines inside the code for readability
         while self.checkToken ('TK_NEWLINE'):
@@ -61,13 +63,15 @@ class Parser:
         while not self.checkToken ('TK_EOF'):
             self.statement()
 
+        self.emitter.emitLine ('return 0;')
+        self.emitter.emitLine ('}')
+
 
     def statement (self):
         # Check the first token to see what kind of token it is
 
         # Check if program keyword is here
         if self.checkToken ('TK_PROGRAM'):
-            print ('STATEMENT-PROGRAM')
             self.nextToken ()
             self.match ('TK_IDENTIFIER')
             self.match ('TK_SEMICOLON')
@@ -77,33 +81,39 @@ class Parser:
             
         # writeln (expression | string)
         elif self.checkToken ('TK_WRITELN'):
-            print ('STATEMENT-WRITELN')
             self.nextToken ()
             self.match ('TK_LEFT_PAREN')
 
             if self.checkToken ('TK_STRING'):
                 # String
+                self.emitter.emitLine ("printf(\"" + self.curToken.text + "\\n\");")
                 self.nextToken ()
             else:
                 # Expect an expression
+                self.emitter.emit ("printf(\"%" + ".2f\\n\", (float)(")
                 self.expression ()
+                self.emitter.emitLine ("));")
             self.match ('TK_RIGHT_PAREN')
+            self.match ('TK_SEMICOLON')
 
+        # var identifier = expression
         elif self.checkToken ('TK_VAR'):
             self.nextToken ()
 
             # Check if identifier exists in symbols table, if not then declare it
             if self.curToken.text not in self.symbols:
                 self.symbols.add (self.curToken.text)
-
+                self.emitter.headerLine ("float " + self.curToken.text + ";")
+            self.emitter.emit (self.curToken.text + " = ")
             self.match ('TK_IDENTIFIER')
             self.match ('TK_ASSIGNMENT')
 
+
             self.expression ()
+            self.emitter.emitLine (";")
 
 
         else:
-            print ('STATEMENT-END')
             self.match ('TK_END')
             self.match ('TK_PERIOD')
         
@@ -112,11 +122,10 @@ class Parser:
 
 
     def comparison (self):
-        print ('COMPARISON')
-
         self.expression ()
         # Must be at least one comparison operator and another expression.
         if self.isComparisonOperator():
+            self.emitter.emit(self.curToken.text)
             self.nextToken()
             self.expression()
         else:
@@ -124,49 +133,50 @@ class Parser:
 
         # Can have 0 or more comparison operator and expressions
         while self.isComparisonOperator ():
+            self.emitter.emit(self.curToken.text)
             self.nextToken ()
             self.expression ()
 
 
 
     def expression (self):
-        print ('EXPRESSION')
-
         self.term ()
         # Can have 0 or more +/- and expressions
         while self.checkToken ('TK_ADDITION') or self .checkToken ('TK_SUBTRACTION'):
+            self.emitter.emit (self.curToken.text)
             self.nextToken ()
             self.term ()
 
     
 
     def term (self):
-        print ('TERM')
         self.unary ()
         # Can have 0 or more*// expressions
         while self.checkToken ('TK_MULTIPLICATION') or self.checkToken ('TK_DIVISION'):
+            self.emitter.emit (self.curToken.text)
             self.nextToken ()
             self.unary ()
 
 
 
     def unary (self):
-        print ('UNARY')
         # Optional +/-
         if self.checkToken ('TK_ADDITION') or self.checkToken ('TK_SUBTRACTION'):
+            self.emitter.emit (self.curToken.text)
             self.nextToken ()
         self.primary ()
 
 
 
     def primary (self):
-        print ('PRIMARY (' + self.curToken.text + ')')
         if self.checkToken ('TK_NUMBER'):
+            self.emitter.emit (self.curToken.text)
             self.nextToken ()
         elif self.checkToken ('TK_IDENTIFIER'):
             # make sure the variable already exists
             if self.curToken.text not in self.symbols:
                 self.abort ('Referencing variable before assignment: ' + self.curToken.text)
+            self.emitter.emit (self.curToken.text)
             self.nextToken ()
         else:
             # Error!
