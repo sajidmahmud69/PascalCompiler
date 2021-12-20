@@ -28,5 +28,6 @@ This is a very simple pascal compiler written in python. The way it runs is it u
 - TK_END
 - TK_ADDITION
 - TK_MULTIPLICATION
+
 Once every word or reserved keyword is tokenized it then passes these tokens into the parser. Parser checks to see if all tokens form a valid syntax. If a valid syntax is formed it will then use the Emitter class to emit the pascal source code into a C code. Lastly, we can use the gcc compiler or mingw compiler to compile the C code created from the pascal file using our custom lexical analyzer and parser analyzer.
 **NOTE: This compiler only handles how to print a statement into console and perform only float data type assignment and basic arithmetic operations**
