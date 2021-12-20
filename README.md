@@ -13,7 +13,7 @@ Sajid Mahmud
 1. Clone the repo using the command **git clone https://sajidmahmud69/PascalCompiler.git** or download the repo as a zip folder
 2. Open a terminal or a command prompt
 3. Open the directory where the git repo is downloaded/cloned
-4. **python pascal_compiler.py ./hello.pas** `NOTE: ./hello.pas is a sample pascal file that is provided with this git repo to showcase the compiler. To run your own pascal file just provide the file path in place of ./hello.pas`
+4. Write the command **python pascal_compiler.py ./hello.pas** `NOTE: ./hello.pas is a sample pascal file that is provided with this git repo to showcase the compiler. To run your own pascal file just provide the file path in place of ./hello.pas`
 5. If everything goes alright you will see the message **Parsing Completed** in the terminal/command prompt. This will generate a file "output.c"
 6. Write the following command in the terminal **gcc output.c -o out**
 7. The last command is:
