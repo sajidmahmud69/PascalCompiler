@@ -1,8 +1,7 @@
 import sys
 from lexer import Lexer
 from parse import Parser
-from lex import RESERVED_KEYWORD_DICT
-from enum import Enum
+from emitter import Emitter
 
 
 def main ():
@@ -15,11 +14,13 @@ def main ():
     with open (sys.argv[1], 'r') as src_file:
         input_file = src_file.read ()
 
-    # Initialize the lexer and parser
+    # Initialize the lexer, emitter and parser
     lexer = Lexer (input_file)
-    parser = Parser (lexer)
+    emitter = Emitter ('output.c')
+    parser = Parser (lexer, emitter)
 
     parser.program ()       # start the parser
+    emitter.writeFile ()    # write the output to the file 
     print ('Parsing completed')
 
     # user_input = '( = ) ; . abcdf'

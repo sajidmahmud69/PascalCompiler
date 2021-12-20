@@ -6,6 +6,8 @@ from lexer import Lexer
 class Parser:
     def __init__(self, lexer):
         self.lexer = lexer
+
+        self.symbols = set ()           # variables declared so far
         self.curToken = None
         self.peekToken = None
         self.nextToken()
@@ -87,19 +89,19 @@ class Parser:
                 self.expression ()
             self.match ('TK_RIGHT_PAREN')
 
-        # # if condiition
-        # elif self.checkToken ('TK_IF'):
-        #     print ('STATEMENT_IF')
-        #     self.nextToken ()
-        #     self.comparison ()
+        elif self.checkToken ('TK_VAR'):
+            self.nextToken ()
 
-        #     self.match ('TK_THEN')
-        #     self.newline ()
+            # Check if identifier exists in symbols table, if not then declare it
+            if self.curToken.text not in self.symbols:
+                self.symbols.add (self.curToken.text)
 
-        #     # Zero or more statements in the if body
-        #     while not self.checkToken ('TK_')
+            self.match ('TK_IDENTIFIER')
+            self.match ('TK_ASSIGNMENT')
 
-        # last token must be TK_END followed by TK_PERIOD
+            self.expression ()
+
+
         else:
             print ('STATEMENT-END')
             self.match ('TK_END')
@@ -162,6 +164,9 @@ class Parser:
         if self.checkToken ('TK_NUMBER'):
             self.nextToken ()
         elif self.checkToken ('TK_IDENTIFIER'):
+            # make sure the variable already exists
+            if self.curToken.text not in self.symbols:
+                self.abort ('Referencing variable before assignment: ' + self.curToken.text)
             self.nextToken ()
         else:
             # Error!
