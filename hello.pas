@@ -1,4 +1,5 @@
 program hello;
 begin
-    writeln "bye"
+    writeln (5 + 2 * 10)
+
 end.

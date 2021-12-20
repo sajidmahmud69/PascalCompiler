@@ -60,7 +60,7 @@ OPERATOR_DICT = {
     'or': 'TK_OR',
     'not': 'TK_NOT',
 
-    # Miscellaniious
+    # Miscellaneous
     '(': 'TK_LEFT_PAREN',
     ')': 'TK_RIGHT_PAREN',
     ';': 'TK_SEMICOLON',

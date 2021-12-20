@@ -32,6 +32,17 @@ class Parser:
         self.peekToken = self.lexer.getToken()
         # No need to worry about passing the EOF, lexer handles that.
 
+
+    # Return true if the current token is a comparison operator
+    def isComparisonOperator (self):
+        return \
+            self.checkToken ('TK_GREATER_THAN') or \
+            self.checkToken ('TK_GREATER_THAN_OR_EQUAL') or \
+            self.checkToken ('TK_LESS_THAN') or \
+            self.checkToken ('TK_LESS_THAN_OR_EQUAL') or \
+            self.checkToken ('TK_EQUAL') or \
+            self.checkToken ('TK_NOT_EQUAL')
+
     def abort(self, message):
         sys.exit("Error. " + message)
 
@@ -39,6 +50,10 @@ class Parser:
 
     def program (self):
         print ('PROGRAM')
+
+        # We need to ignore some newlines as they maybe newlines inside the code for readability
+        while self.checkToken ('TK_NEWLINE'):
+            self.nextToken ()
 
         # Parse all the statements in the program
         while not self.checkToken ('TK_EOF'):
@@ -62,6 +77,7 @@ class Parser:
         elif self.checkToken ('TK_WRITELN'):
             print ('STATEMENT-WRITELN')
             self.nextToken ()
+            self.match ('TK_LEFT_PAREN')
 
             if self.checkToken ('TK_STRING'):
                 # String
@@ -69,18 +85,19 @@ class Parser:
             else:
                 # Expect an expression
                 self.expression ()
+            self.match ('TK_RIGHT_PAREN')
 
-        # if condiition
-        elif self.checkToken ('TK_IF'):
-            print ('STATEMENT_IF')
-            self.nextToken ()
-            self.comparison ()
+        # # if condiition
+        # elif self.checkToken ('TK_IF'):
+        #     print ('STATEMENT_IF')
+        #     self.nextToken ()
+        #     self.comparison ()
 
-            self.match ('TK_THEN')
-            self.newline ()
+        #     self.match ('TK_THEN')
+        #     self.newline ()
 
-            # Zero or more statements in the if body
-            while not self.checkToken ('TK_')
+        #     # Zero or more statements in the if body
+        #     while not self.checkToken ('TK_')
 
         # last token must be TK_END followed by TK_PERIOD
         else:
@@ -90,6 +107,67 @@ class Parser:
         
         # newline
         self.newline ()
+
+
+    def comparison (self):
+        print ('COMPARISON')
+
+        self.expression ()
+        # Must be at least one comparison operator and another expression.
+        if self.isComparisonOperator():
+            self.nextToken()
+            self.expression()
+        else:
+            self.abort("Expected comparison operator at: " + self.curToken.text)
+
+        # Can have 0 or more comparison operator and expressions
+        while self.isComparisonOperator ():
+            self.nextToken ()
+            self.expression ()
+
+
+
+    def expression (self):
+        print ('EXPRESSION')
+
+        self.term ()
+        # Can have 0 or more +/- and expressions
+        while self.checkToken ('TK_ADDITION') or self .checkToken ('TK_SUBTRACTION'):
+            self.nextToken ()
+            self.term ()
+
+    
+
+    def term (self):
+        print ('TERM')
+        self.unary ()
+        # Can have 0 or more*// expressions
+        while self.checkToken ('TK_MULTIPLICATION') or self.checkToken ('TK_DIVISION'):
+            self.nextToken ()
+            self.unary ()
+
+
+
+    def unary (self):
+        print ('UNARY')
+        # Optional +/-
+        if self.checkToken ('TK_ADDITION') or self.checkToken ('TK_SUBTRACTION'):
+            self.nextToken ()
+        self.primary ()
+
+
+
+    def primary (self):
+        print ('PRIMARY (' + self.curToken.text + ')')
+        if self.checkToken ('TK_NUMBER'):
+            self.nextToken ()
+        elif self.checkToken ('TK_IDENTIFIER'):
+            self.nextToken ()
+        else:
+            # Error!
+            self.abort("Unexpected token at " + self.curToken.text)
+
+
 
     def newline (self):
         # print ("NEWLINE")
