@@ -58,8 +58,6 @@ class Parser:
             self.match ('TK_BEGIN')
             # self.match ('TK_NEWLINE')
             
-        
-
         # writeln (expression | string)
         elif self.checkToken ('TK_WRITELN'):
             print ('STATEMENT-WRITELN')
@@ -71,6 +69,18 @@ class Parser:
             else:
                 # Expect an expression
                 self.expression ()
+
+        # if condiition
+        elif self.checkToken ('TK_IF'):
+            print ('STATEMENT_IF')
+            self.nextToken ()
+            self.comparison ()
+
+            self.match ('TK_THEN')
+            self.newline ()
+
+            # Zero or more statements in the if body
+            while not self.checkToken ('TK_')
 
         # last token must be TK_END followed by TK_PERIOD
         else:

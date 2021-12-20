@@ -21,6 +21,7 @@ RESERVED_KEYWORD_DICT = {
     'for': 'TK_FOR',
     'if': 'TK_IF',
     'else': 'TK_ELSE',
+    'then': 'TK_THEN',
     'while': 'TK_WHILE',
     'writeln': 'TK_WRITELN',
     'TK_NEWLINE': 'TK_NEWLINE',
